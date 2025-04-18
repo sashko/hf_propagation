@@ -1,7 +1,9 @@
+import 'package:hf_propagation/solar_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  fetchAndParseSolarData();
   runApp(const MainApp());
 }
 
