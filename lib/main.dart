@@ -12,6 +12,20 @@ Future<void> _launchURL(Uri url) async {
   }
 }
 
+Color _getColorForCondition(String condition, BuildContext context) {
+  switch (condition.toLowerCase()) {
+    case 'good':
+      return Colors.green;
+    case 'poor':
+      return Colors.red;
+    case 'fair':
+      return Colors.yellow;
+    default:
+      return Theme.of(context).textTheme.bodyMedium?.color ??
+          Colors.black; // Default to system color
+  }
+}
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
@@ -136,21 +150,39 @@ class _MainPageState extends State<MainPage> {
                           DataColumn(label: Text('Night')),
                         ],
                         rows:
-                            bandConditions.entries
-                                .map(
-                                  (entry) => DataRow(
-                                    cells: [
-                                      DataCell(Text(entry.key)),
-                                      DataCell(
-                                        Text(entry.value['day'] ?? 'N/A'),
+                            bandConditions.entries.map((entry) {
+                              String dayCondition = entry.value['day'] ?? 'N/A';
+                              String nightCondition =
+                                  entry.value['night'] ?? 'N/A';
+
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(entry.key)),
+                                  DataCell(
+                                    Text(
+                                      dayCondition,
+                                      style: TextStyle(
+                                        color: _getColorForCondition(
+                                          dayCondition,
+                                          context,
+                                        ),
                                       ),
-                                      DataCell(
-                                        Text(entry.value['night'] ?? 'N/A'),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                )
-                                .toList(),
+                                  DataCell(
+                                    Text(
+                                      nightCondition,
+                                      style: TextStyle(
+                                        color: _getColorForCondition(
+                                          nightCondition,
+                                          context,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
                       ),
                     ),
                     const SizedBox(height: 20),
