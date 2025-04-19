@@ -1,5 +1,6 @@
 import 'package:hf_propagation/solar_data.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -221,6 +222,59 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Data source: ',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.color ??
+                                    Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'NØNBH',
+                              style: TextStyle(
+                                color: Colors.purple,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' via ',
+                              style: TextStyle(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.color ??
+                                    Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'hamqsl.com',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer:
+                                  TapGestureRecognizer()
+                                    ..onTap = () {
+                                      final Uri url = Uri(
+                                        scheme: 'https',
+                                        host: 'hamqsl.com',
+                                      );
+                                      _launchURL(url);
+                                    },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                   ],
                 ),
               ),
