@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  fetchAndParseSolarData();
   runApp(const MainApp());
 }
 
@@ -38,6 +37,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndParseSolarData().then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +103,95 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // HF Band Conditions
+                    const Text(
+                      'HF Band Conditions',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        '${solarData['Updated'] ?? 'N/A'}',
+                        style: TextStyle(fontSize: 14, color: Colors.yellow),
+                      ),
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: DataTable(
+                        columnSpacing: 20,
+                        columns: const [
+                          DataColumn(label: Text('Band')),
+                          DataColumn(label: Text('Day')),
+                          DataColumn(label: Text('Night')),
+                        ],
+                        rows:
+                            bandConditions.entries
+                                .map(
+                                  (entry) => DataRow(
+                                    cells: [
+                                      DataCell(Text(entry.key)),
+                                      DataCell(
+                                        Text(entry.value['day'] ?? 'N/A'),
+                                      ),
+                                      DataCell(
+                                        Text(entry.value['night'] ?? 'N/A'),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Solar Data
+                    const Text(
+                      'Solar Data',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: DataTable(
+                        headingRowHeight: 0,
+                        columns: const [
+                          DataColumn(label: SizedBox.shrink()),
+                          DataColumn(label: SizedBox.shrink()),
+                        ],
+                        rows:
+                            solarData.entries
+                                .skip(
+                                  1,
+                                ) // Skip "Updated" as it's already displayed above
+                                .map(
+                                  (entry) => DataRow(
+                                    cells: [
+                                      DataCell(Text(entry.key)),
+                                      DataCell(Text(entry.value)),
+                                    ],
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
     );
   }
 }
