@@ -22,8 +22,7 @@ Color _getColorForCondition(String condition, BuildContext context) {
     case 'fair':
       return Colors.yellow;
     default:
-      return Theme.of(context).textTheme.bodyMedium?.color ??
-          Colors.black; // Default to system color
+      return Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
   }
 }
 
@@ -61,6 +60,16 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         _isLoading = false;
       });
+    });
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await fetchAndParseSolarData();
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -118,166 +127,170 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // HF Band Conditions
-                    const Text(
-                      'HF Band Conditions',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: Text(
-                        '${solarData['Updated'] ?? 'N/A'}',
-                        style: TextStyle(fontSize: 14, color: Colors.yellow),
-                      ),
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: DataTable(
-                        columnSpacing: 20,
-                        columns: const [
-                          DataColumn(label: Text('Band')),
-                          DataColumn(label: Text('Day')),
-                          DataColumn(label: Text('Night')),
-                        ],
-                        rows:
-                            bandConditions.entries.map((entry) {
-                              String dayCondition = entry.value['day'] ?? 'N/A';
-                              String nightCondition =
-                                  entry.value['night'] ?? 'N/A';
-
-                              return DataRow(
-                                cells: [
-                                  DataCell(Text(entry.key)),
-                                  DataCell(
-                                    Text(
-                                      dayCondition,
-                                      style: TextStyle(
-                                        color: _getColorForCondition(
-                                          dayCondition,
-                                          context,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(
-                                    Text(
-                                      nightCondition,
-                                      style: TextStyle(
-                                        color: _getColorForCondition(
-                                          nightCondition,
-                                          context,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Solar Data
-                    const Text(
-                      'Solar Data',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: DataTable(
-                        headingRowHeight: 0,
-                        columns: const [
-                          DataColumn(label: SizedBox.shrink()),
-                          DataColumn(label: SizedBox.shrink()),
-                        ],
-                        rows:
-                            solarData.entries
-                                .skip(
-                                  1,
-                                ) // Skip "Updated" as it's already displayed above
-                                .map(
-                                  (entry) => DataRow(
-                                    cells: [
-                                      DataCell(Text(entry.key)),
-                                      DataCell(Text(entry.value)),
-                                    ],
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Data source: ',
-                              style: TextStyle(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium?.color ??
-                                    Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'NØNBH',
-                              style: TextStyle(
-                                color: Colors.purple,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: ' via ',
-                              style: TextStyle(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium?.color ??
-                                    Colors.black,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'hamqsl.com',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                              ),
-                              recognizer:
-                                  TapGestureRecognizer()
-                                    ..onTap = () {
-                                      final Uri url = Uri(
-                                        scheme: 'https',
-                                        host: 'hamqsl.com',
-                                      );
-                                      _launchURL(url);
-                                    },
-                            ),
-                          ],
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child:
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // HF Band Conditions
+                      const Text(
+                        'HF Band Conditions',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                      const SizedBox(height: 8),
+                      Center(
+                        child: Text(
+                          '${solarData['Updated'] ?? 'N/A'}',
+                          style: TextStyle(fontSize: 14, color: Colors.yellow),
+                        ),
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                          columnSpacing: 20,
+                          columns: const [
+                            DataColumn(label: Text('Band')),
+                            DataColumn(label: Text('Day')),
+                            DataColumn(label: Text('Night')),
+                          ],
+                          rows:
+                              bandConditions.entries.map((entry) {
+                                String dayCondition =
+                                    entry.value['day'] ?? 'N/A';
+                                String nightCondition =
+                                    entry.value['night'] ?? 'N/A';
+
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(entry.key)),
+                                    DataCell(
+                                      Text(
+                                        dayCondition,
+                                        style: TextStyle(
+                                          color: _getColorForCondition(
+                                            dayCondition,
+                                            context,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    DataCell(
+                                      Text(
+                                        nightCondition,
+                                        style: TextStyle(
+                                          color: _getColorForCondition(
+                                            nightCondition,
+                                            context,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Solar Data
+                      const Text(
+                        'Solar Data',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                          headingRowHeight: 0,
+                          columns: const [
+                            DataColumn(label: SizedBox.shrink()),
+                            DataColumn(label: SizedBox.shrink()),
+                          ],
+                          rows:
+                              solarData.entries
+                                  .skip(
+                                    1,
+                                  ) // Skip "Updated" as it's already displayed above
+                                  .map(
+                                    (entry) => DataRow(
+                                      cells: [
+                                        DataCell(Text(entry.key)),
+                                        DataCell(Text(entry.value)),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Data source: ',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.color ??
+                                      Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'NØNBH',
+                                style: TextStyle(
+                                  color: Colors.purple,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' via ',
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.color ??
+                                      Colors.black,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'hamqsl.com',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                recognizer:
+                                    TapGestureRecognizer()
+                                      ..onTap = () {
+                                        final Uri url = Uri(
+                                          scheme: 'https',
+                                          host: 'hamqsl.com',
+                                        );
+                                        _launchURL(url);
+                                      },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
                 ),
-              ),
+      ),
     );
   }
 }
