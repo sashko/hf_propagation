@@ -20,7 +20,7 @@ Color _getColorForCondition(String condition, BuildContext context) {
     case 'poor':
       return Colors.red;
     case 'fair':
-      return Colors.yellow;
+      return Colors.orange;
     default:
       return Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
   }
@@ -149,7 +149,7 @@ class _MainPageState extends State<MainPage> {
                       Center(
                         child: Text(
                           '${solarData['Updated'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 14, color: Colors.yellow),
+                          style: TextStyle(fontSize: 14, color: Colors.orange),
                         ),
                       ),
                       SizedBox(
