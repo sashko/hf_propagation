@@ -3,7 +3,7 @@ import 'package:xml/xml.dart' as xml;
 
 Map<String, String> solarData = {};
 Map<String, Map<String, String>> bandConditions = {};
-Map<String, Map<String, String>> vhfConditions = {};
+Map<String, String> vhfConditions = {};
 
 Future<void> fetchAndParseSolarData() async {
   final url = 'https://www.hamqsl.com/solarxml.php';
@@ -90,6 +90,27 @@ Future<void> fetchAndParseSolarData() async {
       print('\n\n--- Band Conditions ---');
       bandConditions.forEach((band, cond) {
         print('$band - Day: ${cond['day']}, Night: ${cond['night']}');
+      });
+
+      // Get the <calculatedvhfconditions> element
+      final calculatedVhfConditions =
+          document.findAllElements('calculatedvhfconditions').first;
+
+      final phenomenons = calculatedVhfConditions.findElements('phenomenon');
+      for (var p in phenomenons) {
+        final name = p.getAttribute('name');
+        final location = p.getAttribute('location');
+        final condition = p.text.trim();
+
+        if (name != null && location != null) {
+          vhfConditions[location] = condition;
+        }
+      }
+
+      // Print VHF conditions
+      print('\n\n--- VHF Conditions ---');
+      vhfConditions.forEach((location, cond) {
+        print('$location: $cond');
       });
     } else {
       print('Failed to load data. Status code: ${response.statusCode}');
