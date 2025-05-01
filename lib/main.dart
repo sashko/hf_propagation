@@ -14,13 +14,20 @@ Future<void> _launchURL(Uri url) async {
 }
 
 Color _getColorForCondition(String condition, BuildContext context) {
-  switch (condition.toLowerCase()) {
-    case 'good':
+  switch (condition.trim()) {
+    case 'Good':
+    case 'MID LAT AUR':
+    case '50/70/144MHz ES':
+    case '144MHz ES':
       return Colors.green;
-    case 'poor':
-      return Colors.red;
-    case 'fair':
+    case 'Fair':
+    case 'High LAT AUR':
+    case 'High MUF (2M only)':
+    case 'High MUF':
       return Colors.orange;
+    case 'Poor':
+    case 'Band Closed':
+      return Colors.red;
     default:
       return Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
   }
@@ -146,6 +153,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
+
                       Center(
                         child: Text(
                           '${solarData['Updated'] ?? 'N/A'}',
@@ -200,6 +208,50 @@ class _MainPageState extends State<MainPage> {
                       ),
                       const SizedBox(height: 20),
 
+                      // VHF Band Conditions
+                      const Text(
+                        'VHF Band Conditions',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: DataTable(
+                          headingRowHeight: 0,
+                          columnSpacing: 20,
+                          columns: const [
+                            DataColumn(label: SizedBox.shrink()),
+                            DataColumn(label: SizedBox.shrink()),
+                          ],
+                          rows:
+                              vhfConditions.entries.map((entry) {
+                                String location = entry.value ?? 'N/A';
+
+                                return DataRow(
+                                  cells: [
+                                    DataCell(Text(entry.key)),
+                                    DataCell(
+                                      Text(
+                                        location,
+                                        style: TextStyle(
+                                          color: _getColorForCondition(
+                                            location,
+                                            context,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
                       // Solar Data
                       const Text(
                         'Solar Data',
@@ -209,6 +261,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
+
                       SizedBox(
                         width: double.infinity,
                         child: DataTable(
@@ -234,6 +287,7 @@ class _MainPageState extends State<MainPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
+
                       Align(
                         alignment: Alignment.centerRight,
                         child: RichText(
