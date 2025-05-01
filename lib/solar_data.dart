@@ -3,7 +3,7 @@ import 'package:xml/xml.dart' as xml;
 
 Map<String, String> solarData = {};
 Map<String, Map<String, String>> bandConditions = {};
-Map<String, Map<String, String>> vhfConditions = {};
+Map<String, String> vhfConditions = {};
 
 Future<void> fetchAndParseSolarData() async {
   final url = 'https://www.hamqsl.com/solarxml.php';
@@ -90,6 +90,36 @@ Future<void> fetchAndParseSolarData() async {
       print('\n\n--- Band Conditions ---');
       bandConditions.forEach((band, cond) {
         print('$band - Day: ${cond['day']}, Night: ${cond['night']}');
+      });
+
+      // Get the <calculatedvhfconditions> element
+      final calculatedVhfConditions =
+          document.findAllElements('calculatedvhfconditions').first;
+
+      final phenomenons = calculatedVhfConditions.findElements('phenomenon');
+      for (var p in phenomenons) {
+        final name = p.getAttribute('name');
+        final location = p.getAttribute('location');
+        final condition = p.text.trim();
+
+        switch (location) {
+          case "northern_hemi":
+            vhfConditions["Aurora"] = condition;
+          case "europe":
+            vhfConditions["2m ES Europe"] = condition;
+          case "europe_4m":
+            vhfConditions["4m ES Europe"] = condition;
+          case "europe_6m":
+            vhfConditions["6m ES Europe"] = condition;
+          case "north_america":
+            vhfConditions["2m ES North America"] = condition;
+        }
+      }
+
+      // Print VHF conditions
+      print('\n\n--- VHF Conditions ---');
+      vhfConditions.forEach((location, cond) {
+        print('$location: $cond');
       });
     } else {
       print('Failed to load data. Status code: ${response.statusCode}');
