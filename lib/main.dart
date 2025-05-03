@@ -17,7 +17,8 @@ Color _getColorForCondition(String condition, BuildContext context) {
   switch (condition.trim()) {
     case 'Good':
     case 'MID LAT AUR':
-    case '50/70/144MHz ES':
+    case '50MHz ES':
+    case '70MHz ES':
     case '144MHz ES':
       return Colors.green;
     case 'Fair':
