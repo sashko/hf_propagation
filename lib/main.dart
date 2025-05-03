@@ -228,27 +228,72 @@ class _MainPageState extends State<MainPage> {
                             DataColumn(label: SizedBox.shrink()),
                             DataColumn(label: SizedBox.shrink()),
                           ],
-                          rows:
-                              vhfConditions.entries.map((entry) {
-                                String location = entry.value ?? 'N/A';
+                          rows: [
+                            DataRow(
+                              cells: [
+                                DataCell(Text('Auroral Latitude')),
+                                DataCell(
+                                  Builder(
+                                    builder: (context) {
+                                      final dynamic aurLatStrValue =
+                                          solarData['Aurora Lat'];
 
-                                return DataRow(
-                                  cells: [
-                                    DataCell(Text(entry.key)),
-                                    DataCell(
-                                      Text(
-                                        location,
+                                      double? value = double.tryParse(
+                                        aurLatStrValue,
+                                      );
+
+                                      // add ° symbol to the value
+                                      final String auroraLatText =
+                                          value != null
+                                              ? '${value.toStringAsFixed(1)}°'
+                                              : 'N/A';
+
+                                      Color aurLatTextColor;
+                                      if (value == null) {
+                                        aurLatTextColor =
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium?.color ??
+                                            Colors.black;
+                                      } else if (value >= 60) {
+                                        aurLatTextColor = Colors.red;
+                                      } else if (value >= 40) {
+                                        aurLatTextColor = Colors.orange;
+                                      } else {
+                                        aurLatTextColor = Colors.green;
+                                      }
+                                      return Text(
+                                        auroraLatText,
                                         style: TextStyle(
-                                          color: _getColorForCondition(
-                                            location,
-                                            context,
-                                          ),
+                                          color: aurLatTextColor,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ...vhfConditions.entries.map((entry) {
+                              String location = entry.value;
+
+                              return DataRow(
+                                cells: [
+                                  DataCell(Text(entry.key)),
+                                  DataCell(
+                                    Text(
+                                      location,
+                                      style: TextStyle(
+                                        color: _getColorForCondition(
+                                          location,
+                                          context,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                );
-                              }).toList(),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ],
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -273,9 +318,11 @@ class _MainPageState extends State<MainPage> {
                           ],
                           rows:
                               solarData.entries
-                                  .skip(
-                                    1,
-                                  ) // Skip "Updated" as it's already displayed above
+                                  .where(
+                                    (entry) =>
+                                        entry.key != 'Updated' &&
+                                        entry.key != 'Aurora Lat',
+                                  )
                                   .map(
                                     (entry) => DataRow(
                                       cells: [
