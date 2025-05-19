@@ -2,6 +2,7 @@ import 'package:hf_propagation/solar_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MainApp());
@@ -41,8 +42,15 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'HF Propagation',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      darkTheme: ThemeData(brightness: Brightness.dark),
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: Colors.blue,
+        fontFamily: GoogleFonts.inter().fontFamily,
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: GoogleFonts.inter().fontFamily,
+      ),
       themeMode: ThemeMode.system,
       home: const MainPage(title: 'HF Propagation'),
     );
