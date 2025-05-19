@@ -96,25 +96,44 @@ Future<void> fetchAndParseSolarData() async {
       final calculatedVhfConditions =
           document.findAllElements('calculatedvhfconditions').first;
 
+      String aurora = 'N/A';
+      String es2mEurope = 'N/A';
+      String es4mEurope = 'N/A';
+      String es6mEurope = 'N/A';
+      String es2mNorthAmerica = 'N/A';
+
       final phenomenons = calculatedVhfConditions.findElements('phenomenon');
+
       for (var p in phenomenons) {
-        final name = p.getAttribute('name');
         final location = p.getAttribute('location');
         final condition = p.text.trim();
 
         switch (location) {
           case "northern_hemi":
-            vhfConditions["Aurora"] = condition;
+            aurora = condition;
+            break;
           case "europe":
-            vhfConditions["2m ES Europe"] = condition;
+            es2mEurope = condition;
+            break;
           case "europe_4m":
-            vhfConditions["4m ES Europe"] = condition;
+            es4mEurope = condition;
+            break;
           case "europe_6m":
-            vhfConditions["6m ES Europe"] = condition;
+            es6mEurope = condition;
+            break;
           case "north_america":
-            vhfConditions["2m ES North America"] = condition;
+            es2mNorthAmerica = condition;
+            break;
         }
       }
+
+      vhfConditions = {
+        "Aurora": aurora,
+        "6m ES Europe": es6mEurope,
+        "4m ES Europe": es4mEurope,
+        "2m ES Europe": es2mEurope,
+        "2m ES North America": es2mNorthAmerica,
+      };
 
       // Print VHF conditions
       print('\n\n--- VHF Conditions ---');
