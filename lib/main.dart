@@ -21,15 +21,15 @@ Color _getColorForCondition(String condition, BuildContext context) {
     case '50MHz ES':
     case '70MHz ES':
     case '144MHz ES':
-      return Colors.green;
+      return Colors.green.shade600;
     case 'Fair':
     case 'High LAT AUR':
     case 'High MUF (2M only)':
     case 'High MUF':
-      return Colors.orange;
+      return Colors.amber.shade700;
     case 'Poor':
     case 'Band Closed':
-      return Colors.red;
+      return Colors.red.shade700;
     default:
       return Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
   }
@@ -166,7 +166,10 @@ class _MainPageState extends State<MainPage> {
                       Center(
                         child: Text(
                           '${solarData['Updated'] ?? 'N/A'}',
-                          style: TextStyle(fontSize: 14, color: Colors.orange),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.yellow.shade800,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -264,11 +267,11 @@ class _MainPageState extends State<MainPage> {
                                             ).textTheme.bodyMedium?.color ??
                                             Colors.black;
                                       } else if (value >= 60) {
-                                        aurLatTextColor = Colors.red;
+                                        aurLatTextColor = Colors.red.shade700;
                                       } else if (value >= 40) {
-                                        aurLatTextColor = Colors.orange;
+                                        aurLatTextColor = Colors.amber.shade700;
                                       } else {
-                                        aurLatTextColor = Colors.green;
+                                        aurLatTextColor = Colors.green.shade600;
                                       }
                                       return Text(
                                         auroraLatText,
