@@ -199,6 +199,7 @@ class _MainPageState extends State<MainPage> {
                                             dayCondition,
                                             context,
                                           ),
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ),
@@ -210,6 +211,7 @@ class _MainPageState extends State<MainPage> {
                                             nightCondition,
                                             context,
                                           ),
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ),
@@ -277,6 +279,7 @@ class _MainPageState extends State<MainPage> {
                                         auroraLatText,
                                         style: TextStyle(
                                           color: aurLatTextColor,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       );
                                     },
@@ -298,12 +301,13 @@ class _MainPageState extends State<MainPage> {
                                           location,
                                           context,
                                         ),
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
                                 ],
                               );
-                            }).toList(),
+                            }),
                           ],
                         ),
                       ),
@@ -338,7 +342,14 @@ class _MainPageState extends State<MainPage> {
                                     (entry) => DataRow(
                                       cells: [
                                         DataCell(Text(entry.key)),
-                                        DataCell(Text(entry.value)),
+                                        DataCell(
+                                          Text(
+                                            entry.value,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   )
