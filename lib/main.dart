@@ -165,7 +165,7 @@ class _MainPageState extends State<MainPage> {
 
                       Center(
                         child: Text(
-                          '${solarData['Updated'] ?? 'N/A'}',
+                          solarData['Updated'] ?? 'N/A',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.yellow.shade800,
