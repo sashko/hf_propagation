@@ -33,7 +33,7 @@ Future<void> fetchAndParseSolarData() async {
             solarDataElement.findElements('heliumline').first.innerText.trim(),
         'Proton Flux':
             solarDataElement.findElements('protonflux').first.innerText.trim(),
-        'Electon Flux':
+        'Electron Flux':
             solarDataElement.findElements('electonflux').first.innerText.trim(),
         'Aurora':
             solarDataElement.findElements('aurora').first.innerText.trim(),
