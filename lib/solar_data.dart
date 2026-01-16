@@ -18,42 +18,37 @@ Future<void> fetchAndParseSolarData() async {
       final solarDataElement = document.findAllElements('solardata').first;
       solarData = {
         'Updated':
-            solarDataElement.findElements('updated').first.text.trim() ?? '',
+            solarDataElement.findElements('updated').first.innerText.trim(),
         'SFI':
-            solarDataElement.findElements('solarflux').first.text.trim() ?? '',
+            solarDataElement.findElements('solarflux').first.innerText.trim(),
         'A Index':
-            solarDataElement.findElements('aindex').first.text.trim() ?? '',
+            solarDataElement.findElements('aindex').first.innerText.trim(),
         'K Index':
-            solarDataElement.findElements('kindex').first.text.trim() ?? '',
+            solarDataElement.findElements('kindex').first.innerText.trim(),
         'MUF US Boulder':
-            solarDataElement.findElements('kindexnt').first.text.trim() ?? '',
-        'X-Ray': solarDataElement.findElements('xray').first.text.trim() ?? '',
-        'SN': solarDataElement.findElements('sunspots').first.text.trim() ?? '',
+            solarDataElement.findElements('kindexnt').first.innerText.trim(),
+        'X-Ray': solarDataElement.findElements('xray').first.innerText.trim(),
+        'SN': solarDataElement.findElements('sunspots').first.innerText.trim(),
         '304A':
-            solarDataElement.findElements('heliumline').first.text.trim() ?? '',
+            solarDataElement.findElements('heliumline').first.innerText.trim(),
         'Proton Flux':
-            solarDataElement.findElements('protonflux').first.text.trim() ?? '',
+            solarDataElement.findElements('protonflux').first.innerText.trim(),
         'Electon Flux':
-            solarDataElement.findElements('electonflux').first.text.trim() ??
-            '',
+            solarDataElement.findElements('electonflux').first.innerText.trim(),
         'Aurora':
-            solarDataElement.findElements('aurora').first.text.trim() ?? '',
+            solarDataElement.findElements('aurora').first.innerText.trim(),
         'Normalization':
-            solarDataElement.findElements('normalization').first.text.trim() ??
-            '',
+            solarDataElement.findElements('normalization').first.innerText.trim(),
         'Aurora Lat':
-            solarDataElement.findElements('latdegree').first.text.trim() ?? '',
+            solarDataElement.findElements('latdegree').first.innerText.trim(),
         'Solar Wind':
-            solarDataElement.findElements('solarwind').first.text.trim() ?? '',
+            solarDataElement.findElements('solarwind').first.innerText.trim(),
         'Magnetic Field':
-            solarDataElement.findElements('magneticfield').first.text.trim() ??
-            '',
+            solarDataElement.findElements('magneticfield').first.innerText.trim(),
         'Geomag Field':
-            solarDataElement.findElements('geomagfield').first.text.trim() ??
-            '',
+            solarDataElement.findElements('geomagfield').first.innerText.trim(),
         'S/N Level':
-            solarDataElement.findElements('signalnoise').first.text.trim() ??
-            '',
+            solarDataElement.findElements('signalnoise').first.innerText.trim(),
       };
 
       // Print solar data
@@ -69,7 +64,7 @@ Future<void> fetchAndParseSolarData() async {
         final name = band.getAttribute('name');
         final time = band.getAttribute('time'); // 'day' or 'night'
         final condition =
-            band.text.trim(); // The actual condition text like "Good", "Poor"
+            band.innerText.trim(); // The actual condition text like "Good", "Poor"
 
         if (name != null && time != null) {
           // Initialize the map for each band
@@ -106,7 +101,7 @@ Future<void> fetchAndParseSolarData() async {
 
       for (var p in phenomenons) {
         final location = p.getAttribute('location');
-        final condition = p.text.trim();
+        final condition = p.innerText.trim();
 
         switch (location) {
           case "northern_hemi":
