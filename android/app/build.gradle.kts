@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.hf_propagation"
+    namespace = "ua.rv.sashko.hf_propagation"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
