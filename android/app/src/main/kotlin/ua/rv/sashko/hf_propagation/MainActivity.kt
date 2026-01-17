@@ -1,4 +1,4 @@
-package com.example.hf_propagation
+package ua.rv.sashko.hf_propagation
 
 import io.flutter.embedding.android.FlutterActivity
 
