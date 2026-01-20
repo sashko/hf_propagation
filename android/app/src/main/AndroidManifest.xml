@@ -24,7 +24,8 @@
         android:label="HF Propagation">
         <receiver
             android:name=".VhfBandConditionsWidget"
-            android:exported="false">
+            android:exported="false"
+            android:label="@string/vhf_widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

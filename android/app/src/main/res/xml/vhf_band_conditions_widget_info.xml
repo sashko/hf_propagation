@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/app_widget_description"
+    android:description="@string/vhf_widget_description"
     android:initialKeyguardLayout="@layout/vhf_band_conditions_widget"
     android:initialLayout="@layout/vhf_band_conditions_widget"
     android:minWidth="250dp"
