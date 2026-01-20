@@ -39,13 +39,21 @@ Future<void> fetchAndParseSolarData() async {
         'Aurora':
             solarDataElement.findElements('aurora').first.innerText.trim(),
         'Normalization':
-            solarDataElement.findElements('normalization').first.innerText.trim(),
+            solarDataElement
+                .findElements('normalization')
+                .first
+                .innerText
+                .trim(),
         'Aurora Lat':
             solarDataElement.findElements('latdegree').first.innerText.trim(),
         'Solar Wind':
             solarDataElement.findElements('solarwind').first.innerText.trim(),
         'Magnetic Field':
-            solarDataElement.findElements('magneticfield').first.innerText.trim(),
+            solarDataElement
+                .findElements('magneticfield')
+                .first
+                .innerText
+                .trim(),
         'Geomag Field':
             solarDataElement.findElements('geomagfield').first.innerText.trim(),
         'S/N Level':
@@ -65,7 +73,8 @@ Future<void> fetchAndParseSolarData() async {
         final name = band.getAttribute('name');
         final time = band.getAttribute('time'); // 'day' or 'night'
         final condition =
-            band.innerText.trim(); // The actual condition text like "Good", "Poor"
+            band.innerText
+                .trim(); // The actual condition text like "Good", "Poor"
 
         if (name != null && time != null) {
           // Initialize the map for each band
@@ -132,12 +141,30 @@ Future<void> fetchAndParseSolarData() async {
       };
 
       // Expose VHF conditions to the widget
-      await HomeWidget.saveWidgetData<String>('auroraLat', solarData['Aurora Lat']);
-      await HomeWidget.saveWidgetData<String>('aurora', vhfConditions['Aurora']);
-      await HomeWidget.saveWidgetData<String>('es6mEurope', vhfConditions['6m ES Europe']);
-      await HomeWidget.saveWidgetData<String>('es4mEurope', vhfConditions['4m ES Europe']);
-      await HomeWidget.saveWidgetData<String>('es2mEurope', vhfConditions['2m ES Europe']);
-      await HomeWidget.saveWidgetData<String>('es2mNorthAmerica', vhfConditions['2m ES North America']);
+      await HomeWidget.saveWidgetData<String>(
+        'auroraLat',
+        solarData['Aurora Lat'],
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'aurora',
+        vhfConditions['Aurora'],
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'es6mEurope',
+        vhfConditions['6m ES Europe'],
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'es4mEurope',
+        vhfConditions['4m ES Europe'],
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'es2mEurope',
+        vhfConditions['2m ES Europe'],
+      );
+      await HomeWidget.saveWidgetData<String>(
+        'es2mNorthAmerica',
+        vhfConditions['2m ES North America'],
+      );
       await HomeWidget.updateWidget(name: 'VhfBandConditionsWidget');
 
       // Print VHF conditions
