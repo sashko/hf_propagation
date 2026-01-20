@@ -7,7 +7,7 @@ Map<String, Map<String, String>> bandConditions = {};
 Map<String, String> vhfConditions = {};
 
 Future<void> fetchAndParseSolarData() async {
-  final url = 'https://www.hamqsl.com/solarxml.php';
+  const url = 'https://www.hamqsl.com/solarxml.php';
 
   try {
     final response = await http.get(Uri.parse(url));

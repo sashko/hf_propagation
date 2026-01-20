@@ -244,7 +244,7 @@ class _MainPageState extends State<MainPage> {
                           rows: [
                             DataRow(
                               cells: [
-                                DataCell(Text('Auroral Latitude')),
+                                const DataCell(Text('Auroral Latitude')),
                                 DataCell(
                                   Builder(
                                     builder: (context) {
@@ -345,7 +345,7 @@ class _MainPageState extends State<MainPage> {
                                         DataCell(
                                           Text(
                                             entry.value,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -373,7 +373,7 @@ class _MainPageState extends State<MainPage> {
                                       Colors.black,
                                 ),
                               ),
-                              TextSpan(
+                              const TextSpan(
                                 text: 'NØNBH',
                                 style: TextStyle(
                                   color: Colors.purple,
@@ -392,7 +392,7 @@ class _MainPageState extends State<MainPage> {
                               ),
                               TextSpan(
                                 text: 'hamqsl.com',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.blue,
                                   decoration: TextDecoration.underline,
                                 ),
