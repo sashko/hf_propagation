@@ -146,9 +146,11 @@ Future<void> fetchAndParseSolarData() async {
         print('$location: $cond');
       });
     } else {
-      print('Failed to load data. Status code: ${response.statusCode}');
+      throw Exception(
+        'Failed to load data. Status code: ${response.statusCode}',
+      );
     }
   } catch (e) {
-    print('Error occurred: $e');
+    rethrow;
   }
 }
