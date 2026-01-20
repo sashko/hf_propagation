@@ -9,10 +9,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/title_text"
         android:text="VHF Band Conditions"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="12dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Auroral Latitude"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -32,6 +34,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
@@ -39,8 +42,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FF444444"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -52,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Aurora"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -60,6 +64,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
@@ -67,8 +72,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FF444444"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,6 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="6m Es Europe"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -88,6 +94,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
@@ -95,8 +102,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FF444444"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -108,6 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="4m Es Europe"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -116,6 +124,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
@@ -123,8 +132,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FF444444"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -136,6 +145,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="2m Es Europe"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -144,6 +154,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
@@ -151,8 +162,8 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FF444444"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginTop="9dp"
+        android:layout_marginBottom="9dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -164,6 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="2m Es N. America"
+            android:textSize="@dimen/label_text"
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -172,6 +184,7 @@
             android:layout_height="wrap_content"
             android:text="N/A"
             android:textStyle="bold"
+            android:textSize="@dimen/value_text"
             android:textColor="#FFFFFF" />
     </LinearLayout>
 
