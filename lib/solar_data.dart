@@ -140,32 +140,36 @@ Future<void> fetchAndParseSolarData() async {
         "2m ES North America": es2mNorthAmerica,
       };
 
-      // Expose VHF conditions to the widget
-      await HomeWidget.saveWidgetData<String>(
-        'auroraLat',
-        solarData['Aurora Lat'],
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'aurora',
-        vhfConditions['Aurora'],
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'es6mEurope',
-        vhfConditions['6m ES Europe'],
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'es4mEurope',
-        vhfConditions['4m ES Europe'],
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'es2mEurope',
-        vhfConditions['2m ES Europe'],
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'es2mNorthAmerica',
-        vhfConditions['2m ES North America'],
-      );
-      await HomeWidget.updateWidget(name: 'VhfBandConditionsWidget');
+      // Expose VHF conditions to the widget — failures are non-fatal
+      try {
+        await HomeWidget.saveWidgetData<String>(
+          'auroraLat',
+          solarData['Aurora Lat'],
+        );
+        await HomeWidget.saveWidgetData<String>(
+          'aurora',
+          vhfConditions['Aurora'],
+        );
+        await HomeWidget.saveWidgetData<String>(
+          'es6mEurope',
+          vhfConditions['6m ES Europe'],
+        );
+        await HomeWidget.saveWidgetData<String>(
+          'es4mEurope',
+          vhfConditions['4m ES Europe'],
+        );
+        await HomeWidget.saveWidgetData<String>(
+          'es2mEurope',
+          vhfConditions['2m ES Europe'],
+        );
+        await HomeWidget.saveWidgetData<String>(
+          'es2mNorthAmerica',
+          vhfConditions['2m ES North America'],
+        );
+        await HomeWidget.updateWidget(name: 'VhfBandConditionsWidget');
+      } catch (e) {
+        print('HomeWidget update failed: $e');
+      }
 
       // Print VHF conditions
       print('\n\n--- VHF Conditions ---');

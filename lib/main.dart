@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MainApp());
 }
 
@@ -73,6 +74,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     fetchAndParseSolarData().then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    }).catchError((e) {
       setState(() {
         _isLoading = false;
       });
