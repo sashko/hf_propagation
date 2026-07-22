@@ -151,8 +151,8 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
       return when {
         auroraLatString == "No Report" -> Color.parseColor("#D32F2F")
         value == null -> Color.WHITE
-        value >= 60.0 -> Color.parseColor("#D32F2F") // red
-        value >= 40.0 -> Color.parseColor("#FFA000") // amber
+        value >= 65.0 -> Color.parseColor("#D32F2F") // red
+        value >= 60.0 -> Color.parseColor("#FFA000") // amber
         else -> Color.parseColor("#43A047") // green
       }
     }

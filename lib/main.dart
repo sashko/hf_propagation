@@ -279,9 +279,9 @@ class _MainPageState extends State<MainPage> {
                                                 context,
                                               ).textTheme.bodyMedium?.color ??
                                               Colors.black;
-                                        } else if (value >= 60) {
+                                        } else if (value >= 65) {
                                           aurLatTextColor = Colors.red.shade700;
-                                        } else if (value >= 40) {
+                                        } else if (value >= 60) {
                                           aurLatTextColor =
                                               Colors.amber.shade700;
                                         } else {
