@@ -117,9 +117,13 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
         val es2mEurope = widgetData.getString("es2mEurope", "N/A")
         val es2mNorthAmerica = widgetData.getString("es2mNorthAmerica", "N/A")
 
-        // Format Aurora Lat value
-        val auroraLatValue = auroraLatString?.toDoubleOrNull()
-        val auroraLatText = if (auroraLatValue != null) "%.1f°".format(auroraLatValue) else "N/A"
+        val auroraLatText =
+            when {
+              auroraLatString == "No Report" -> "No Report"
+              auroraLatString?.toDoubleOrNull() != null ->
+                  "%.1f°".format(auroraLatString.toDouble())
+              else -> "N/A"
+            }
 
         // Set text values
         setTextViewText(R.id.auroraLat_text, auroraLatText)
@@ -145,6 +149,7 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
     private fun getAuroraLatColor(auroraLatString: String?): Int {
       val value = auroraLatString?.toDoubleOrNull()
       return when {
+        auroraLatString == "No Report" -> Color.parseColor("#D32F2F")
         value == null -> Color.WHITE
         value >= 60.0 -> Color.parseColor("#D32F2F") // red
         value >= 40.0 -> Color.parseColor("#FFA000") // amber

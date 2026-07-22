@@ -73,15 +73,17 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    fetchAndParseSolarData().then((_) {
-      setState(() {
-        _isLoading = false;
-      });
-    }).catchError((e) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    fetchAndParseSolarData()
+        .then((_) {
+          setState(() {
+            _isLoading = false;
+          });
+        })
+        .catchError((e) {
+          setState(() {
+            _isLoading = false;
+          });
+        });
   }
 
   Future<void> _onRefresh() async {
@@ -256,29 +258,36 @@ class _MainPageState extends State<MainPage> {
                                       final dynamic aurLatStrValue =
                                           solarData['Aurora Lat'];
 
-                                      double? value = double.tryParse(
-                                        aurLatStrValue,
-                                      );
-
-                                      // add ° symbol to the value
-                                      final String auroraLatText =
-                                          value != null
-                                              ? '${value.toStringAsFixed(1)}°'
-                                              : 'N/A';
-
+                                      final String auroraLatText;
                                       Color aurLatTextColor;
-                                      if (value == null) {
-                                        aurLatTextColor =
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodyMedium?.color ??
-                                            Colors.black;
-                                      } else if (value >= 60) {
+
+                                      if (aurLatStrValue == 'No Report') {
+                                        auroraLatText = 'No Report';
                                         aurLatTextColor = Colors.red.shade700;
-                                      } else if (value >= 40) {
-                                        aurLatTextColor = Colors.amber.shade700;
                                       } else {
-                                        aurLatTextColor = Colors.green.shade600;
+                                        double? value = double.tryParse(
+                                          aurLatStrValue,
+                                        );
+                                        auroraLatText =
+                                            value != null
+                                                ? '${value.toStringAsFixed(1)}°'
+                                                : 'N/A';
+
+                                        if (value == null) {
+                                          aurLatTextColor =
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium?.color ??
+                                              Colors.black;
+                                        } else if (value >= 60) {
+                                          aurLatTextColor = Colors.red.shade700;
+                                        } else if (value >= 40) {
+                                          aurLatTextColor =
+                                              Colors.amber.shade700;
+                                        } else {
+                                          aurLatTextColor =
+                                              Colors.green.shade600;
+                                        }
                                       }
                                       return Text(
                                         auroraLatText,
