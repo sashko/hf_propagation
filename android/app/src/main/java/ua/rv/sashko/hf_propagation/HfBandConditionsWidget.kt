@@ -29,6 +29,5 @@ internal fun updateAppWidget(
     appWidgetId: Int
 ) {
     val views = RemoteViews(context.packageName, R.layout.hf_band_conditions_widget)
-    views.setTextViewText(R.id.appwidget_text, context.getString(R.string.hf_widget_name))
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
