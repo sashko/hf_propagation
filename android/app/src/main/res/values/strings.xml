@@ -2,4 +2,6 @@
 <resources>
     <string name="vhf_widget_description">Propagation conditions on the VHF bands</string>
     <string name="vhf_widget_name">VHF Band Conditions</string>
+    <string name="hf_widget_description">Propagation conditions on the HF bands</string>
+    <string name="hf_widget_name">HF Band Conditions</string>
 </resources>
