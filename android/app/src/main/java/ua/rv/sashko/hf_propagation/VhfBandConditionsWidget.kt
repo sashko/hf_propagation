@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
@@ -134,44 +135,48 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
         setTextViewText(R.id.es2mNorthAmerica_text, es2mNorthAmerica)
 
         // Set text colors
-        setTextColor(R.id.auroraLat_text, getAuroraLatColor(auroraLatString))
-        setTextColor(R.id.aurora_text, getColorForCondition(aurora ?: "N/A"))
-        setTextColor(R.id.es6mEurope_text, getColorForCondition(es6mEurope ?: "N/A"))
-        setTextColor(R.id.es4mEurope_text, getColorForCondition(es4mEurope ?: "N/A"))
-        setTextColor(R.id.es2mEurope_text, getColorForCondition(es2mEurope ?: "N/A"))
+        setTextColor(R.id.auroraLat_text, getAuroraLatColor(context, auroraLatString))
+        setTextColor(R.id.aurora_text, getColorForCondition(context, aurora ?: "N/A"))
+        setTextColor(R.id.es6mEurope_text, getColorForCondition(context, es6mEurope ?: "N/A"))
+        setTextColor(R.id.es4mEurope_text, getColorForCondition(context, es4mEurope ?: "N/A"))
+        setTextColor(R.id.es2mEurope_text, getColorForCondition(context, es2mEurope ?: "N/A"))
         setTextColor(
             R.id.es2mNorthAmerica_text,
-            getColorForCondition(es2mNorthAmerica ?: "N/A"),
+            getColorForCondition(context, es2mNorthAmerica ?: "N/A"),
         )
       }
     }
 
-    private fun getAuroraLatColor(auroraLatString: String?): Int {
+    private fun getAuroraLatColor(context: Context, auroraLatString: String?): Int {
       val value = auroraLatString?.toDoubleOrNull()
-      return when {
-        auroraLatString == "No Report" -> Color.parseColor("#D32F2F")
-        value == null -> Color.WHITE
-        value >= 65.0 -> Color.parseColor("#D32F2F") // red
-        value >= 60.0 -> Color.parseColor("#FFA000") // amber
-        else -> Color.parseColor("#43A047") // green
-      }
+      val colorRes =
+          when {
+            auroraLatString == "No Report" -> R.color.condition_poor
+            value == null -> return Color.WHITE
+            value >= 65.0 -> R.color.condition_poor
+            value >= 60.0 -> R.color.condition_fair
+            else -> R.color.condition_good
+          }
+      return ContextCompat.getColor(context, colorRes)
     }
 
-    private fun getColorForCondition(condition: String): Int {
-      return when (condition.trim()) {
-        "Good",
-        "MID LAT AUR",
-        "50MHz ES",
-        "70MHz ES",
-        "144MHz ES" -> Color.parseColor("#43A047") // green
-        "Fair",
-        "High LAT AUR",
-        "High MUF (2M only)",
-        "High MUF" -> Color.parseColor("#FFA000") // amber
-        "Poor",
-        "Band Closed" -> Color.parseColor("#D32F2F") // red
-        else -> Color.WHITE
-      }
+    private fun getColorForCondition(context: Context, condition: String): Int {
+      val colorRes =
+          when (condition.trim()) {
+            "Good",
+            "MID LAT AUR",
+            "50MHz ES",
+            "70MHz ES",
+            "144MHz ES" -> R.color.condition_good
+            "Fair",
+            "High LAT AUR",
+            "High MUF (2M only)",
+            "High MUF" -> R.color.condition_fair
+            "Poor",
+            "Band Closed" -> R.color.condition_poor
+            else -> return Color.WHITE
+          }
+      return ContextCompat.getColor(context, colorRes)
     }
   }
 }

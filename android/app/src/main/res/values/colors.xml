@@ -3,4 +3,9 @@
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
+
+    <!-- Band condition colors, shared by the HF and VHF widgets. -->
+    <color name="condition_good">#FF43A047</color>
+    <color name="condition_fair">#FFFFA000</color>
+    <color name="condition_poor">#FFD32F2F</color>
 </resources>

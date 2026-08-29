@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
@@ -117,20 +118,22 @@ class HfBandConditionsWidget : HomeWidgetProvider() {
           val night = widgetData.getString("${key}_night", "N/A") ?: "N/A"
           setTextViewText(dayId, day)
           setTextViewText(nightId, night)
-          setTextColor(dayId, getColorForCondition(day))
-          setTextColor(nightId, getColorForCondition(night))
+          setTextColor(dayId, getColorForCondition(context, day))
+          setTextColor(nightId, getColorForCondition(context, night))
         }
       }
     }
 
-    private fun getColorForCondition(condition: String): Int {
-      return when (condition.trim()) {
-        "Good" -> Color.parseColor("#43A047")
-        "Fair" -> Color.parseColor("#FFA000")
-        "Poor",
-        "Band Closed" -> Color.parseColor("#D32F2F")
-        else -> Color.WHITE
-      }
+    private fun getColorForCondition(context: Context, condition: String): Int {
+      val colorRes =
+          when (condition.trim()) {
+            "Good" -> R.color.condition_good
+            "Fair" -> R.color.condition_fair
+            "Poor",
+            "Band Closed" -> R.color.condition_poor
+            else -> return Color.WHITE
+          }
+      return ContextCompat.getColor(context, colorRes)
     }
   }
 }
