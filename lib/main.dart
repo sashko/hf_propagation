@@ -96,6 +96,106 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  static const _solarDataHelp = <String, String>{
+    'SFI':
+        'Solar Flux Index — radio emissions at 10.7 cm. Higher means better HF propagation. <70 poor, 90-100 average, 100-150 good, >150 ideal.',
+    'SN':
+        'Sunspot Number — count of visible sunspots. More sunspots = higher solar activity = better HF. <50 very poor, 75-100 good, 100-150 ideal, >150 exceptional.',
+    'A Index':
+        'Daily geomagnetic activity average (0-400). Lower = quieter = better HF. 1-5 best, 6-9 average, 10+ very poor.',
+    'K Index':
+        '3-hour geomagnetic disturbance (0-9). Lower = better. 0-1 best, 2-3 good, 4-5 average, 5-9 very poor.',
+    'X-Ray':
+        'Solar X-ray flux class. A/B = quiet, C = minor, M = moderate flare, X = major flare that can cause HF blackouts.',
+    'MUF US Boulder':
+        'Maximum Usable Frequency measured at Boulder, CO. Higher MUF means higher bands are open for propagation.',
+    '304A':
+        'Helium line EUV radiation at 304 Angstroms. Indicates overall solar activity level.',
+    'Proton Flux':
+        'High-energy proton level. Elevated values can cause polar cap absorption, degrading HF on polar paths.',
+    'Electron Flux':
+        'High-energy electron level. Elevated values indicate enhanced radiation belt activity.',
+    'Aurora':
+        'Auroral activity level. Higher activity can enhance VHF but degrade HF on paths through auroral zones.',
+    'Normalization':
+        'Data normalization factor applied by the source to adjust readings.',
+    'Solar Wind':
+        'Speed of the solar wind in km/s. Normal ~400. Above 500 can trigger geomagnetic disturbances.',
+    'Magnetic Field':
+        'Interplanetary magnetic field (Bz). Southward (negative) Bz drives more geomagnetic activity and worse HF conditions.',
+    'Geomag Field':
+        'Current geomagnetic field status — quiet, unsettled, active, or storm.',
+    'S/N Level':
+        'Signal-to-noise background level. Lower values mean a cleaner band with less noise.',
+  };
+
+  void _showSolarDataHelp(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: ListView(
+                controller: scrollController,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 32,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).dividerColor,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const Text(
+                    'Solar Data Reference',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  ..._solarDataHelp.entries.map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 100,
+                            child: Text(
+                              e.key,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              e.value,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -328,12 +428,25 @@ class _MainPageState extends State<MainPage> {
                       const SizedBox(height: 20),
 
                       // Solar Data
-                      const Text(
-                        'Solar Data',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      Row(
+                        children: [
+                          const Text(
+                            'Solar Data',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          GestureDetector(
+                            onTap: () => _showSolarDataHelp(context),
+                            child: Icon(
+                              Icons.help_outline,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 8),
 
