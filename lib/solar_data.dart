@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
@@ -61,8 +62,10 @@ Future<void> fetchAndParseSolarData() async {
       };
 
       // Print solar data
-      print('\n\n--- Solar Data ---');
-      solarData.forEach((key, value) => print('$key: $value'));
+      if (kDebugMode) {
+        debugPrint('\n\n--- Solar Data ---');
+        solarData.forEach((key, value) => debugPrint('$key: $value'));
+      }
 
       // Get the <calculatedconditions> element
       final calculatedConditions =
@@ -92,10 +95,12 @@ Future<void> fetchAndParseSolarData() async {
       }
 
       // Print band conditions
-      print('\n\n--- Band Conditions ---');
-      bandConditions.forEach((band, cond) {
-        print('$band - Day: ${cond['day']}, Night: ${cond['night']}');
-      });
+      if (kDebugMode) {
+        debugPrint('\n\n--- Band Conditions ---');
+        bandConditions.forEach((band, cond) {
+          debugPrint('$band - Day: ${cond['day']}, Night: ${cond['night']}');
+        });
+      }
 
       // Get the <calculatedvhfconditions> element
       final calculatedVhfConditions =
@@ -168,14 +173,16 @@ Future<void> fetchAndParseSolarData() async {
         );
         await HomeWidget.updateWidget(name: 'VhfBandConditionsWidget');
       } catch (e) {
-        print('HomeWidget update failed: $e');
+        debugPrint('HomeWidget update failed: $e');
       }
 
       // Print VHF conditions
-      print('\n\n--- VHF Conditions ---');
-      vhfConditions.forEach((location, cond) {
-        print('$location: $cond');
-      });
+      if (kDebugMode) {
+        debugPrint('\n\n--- VHF Conditions ---');
+        vhfConditions.forEach((location, cond) {
+          debugPrint('$location: $cond');
+        });
+      }
     } else {
       throw Exception(
         'Failed to load data. Status code: ${response.statusCode}',
