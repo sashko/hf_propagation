@@ -69,28 +69,24 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   bool _isLoading = true;
+  bool _hasError = false;
 
   @override
   void initState() {
     super.initState();
-    fetchAndParseSolarData()
-        .then((_) {
-          setState(() {
-            _isLoading = false;
-          });
-        })
-        .catchError((e) {
-          setState(() {
-            _isLoading = false;
-          });
-        });
+    _loadData();
   }
 
-  Future<void> _onRefresh() async {
+  Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
+      _hasError = false;
     });
-    await fetchAndParseSolarData();
+    try {
+      await fetchAndParseSolarData();
+    } catch (_) {
+      _hasError = true;
+    }
     setState(() {
       _isLoading = false;
     });
@@ -253,8 +249,29 @@ class _MainPageState extends State<MainPage> {
       body:
           _isLoading
               ? const Center(child: CircularProgressIndicator())
+              : _hasError
+              ? Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.cloud_off,
+                      size: 48,
+                      color: Theme.of(context).disabledColor,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Could not load solar data'),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(
+                      onPressed: _loadData,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              )
               : RefreshIndicator(
-                onRefresh: _onRefresh,
+                onRefresh: _loadData,
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(12),
                   child: Column(
