@@ -250,12 +250,12 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child:
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
+      body:
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -541,7 +541,7 @@ class _MainPageState extends State<MainPage> {
                     ],
                   ),
                 ),
-      ),
+              ),
     );
   }
 }
