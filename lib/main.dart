@@ -82,14 +82,29 @@ class _MainPageState extends State<MainPage> {
       _isLoading = true;
       _hasError = false;
     });
+
+    var failed = false;
     try {
       await fetchAndParseSolarData();
     } catch (_) {
-      _hasError = true;
+      failed = true;
     }
+
+    if (!mounted) return;
+
     setState(() {
       _isLoading = false;
+      // Only take over the screen when there is nothing to fall back on.
+      _hasError = failed && solarData.isEmpty;
     });
+
+    // A refresh that fails while data is already on screen keeps the stale
+    // data visible and reports the failure instead of discarding the view.
+    if (failed && solarData.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not update solar data')),
+      );
+    }
   }
 
   static const _solarDataHelp = <String, String>{
@@ -247,7 +262,7 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       body:
-          _isLoading
+          _isLoading && solarData.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : _hasError
               ? Center(
