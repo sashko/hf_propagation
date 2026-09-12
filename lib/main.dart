@@ -461,6 +461,7 @@ class _MainPageState extends State<MainPage> {
 
                       // Solar Data
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
                             'Solar Data',
@@ -469,11 +470,10 @@ class _MainPageState extends State<MainPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width: 4),
                           GestureDetector(
                             onTap: () => _showSolarDataHelp(context),
                             child: Icon(
-                              Icons.help_outline,
+                              Icons.info,
                               size: 20,
                               color: Theme.of(context).colorScheme.primary,
                             ),
