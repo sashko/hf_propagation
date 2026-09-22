@@ -470,13 +470,11 @@ class _MainPageState extends State<MainPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () => _showSolarDataHelp(context),
-                            child: Icon(
-                              Icons.info,
-                              size: 20,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
+                          IconButton(
+                            onPressed: () => _showSolarDataHelp(context),
+                            tooltip: 'Solar data help',
+                            icon: const Icon(Icons.info, size: 20),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ],
                       ),
