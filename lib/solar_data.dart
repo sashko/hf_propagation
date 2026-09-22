@@ -10,7 +10,9 @@ Future<void> fetchAndParseSolarData() async {
   const url = 'https://www.hamqsl.com/solarxml.php';
 
   try {
-    final response = await http.get(Uri.parse(url));
+    final response = await http
+        .get(Uri.parse(url))
+        .timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 200) {
       final document = xml.XmlDocument.parse(response.body);
