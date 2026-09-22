@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
 
@@ -144,37 +143,6 @@ Future<void> fetchAndParseSolarData() async {
         "2m ES Europe": es2mEurope,
         "2m ES North America": es2mNorthAmerica,
       };
-
-      // Expose VHF conditions to the widget — failures are non-fatal
-      try {
-        await HomeWidget.saveWidgetData<String>(
-          'auroraLat',
-          solarData['Aurora Lat'],
-        );
-        await HomeWidget.saveWidgetData<String>(
-          'aurora',
-          vhfConditions['Aurora'],
-        );
-        await HomeWidget.saveWidgetData<String>(
-          'es6mEurope',
-          vhfConditions['6m ES Europe'],
-        );
-        await HomeWidget.saveWidgetData<String>(
-          'es4mEurope',
-          vhfConditions['4m ES Europe'],
-        );
-        await HomeWidget.saveWidgetData<String>(
-          'es2mEurope',
-          vhfConditions['2m ES Europe'],
-        );
-        await HomeWidget.saveWidgetData<String>(
-          'es2mNorthAmerica',
-          vhfConditions['2m ES North America'],
-        );
-        await HomeWidget.updateWidget(name: 'VhfBandConditionsWidget');
-      } catch (e) {
-        debugPrint('HomeWidget update failed: $e');
-      }
 
       // Print VHF conditions
       if (kDebugMode) {
