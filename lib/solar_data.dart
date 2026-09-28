@@ -6,6 +6,11 @@ Map<String, String> solarData = {};
 Map<String, Map<String, String>> bandConditions = {};
 Map<String, String> vhfConditions = {};
 
+String _tagText(xml.XmlElement parent, String name) {
+  final matches = parent.findElements(name);
+  return matches.isEmpty ? 'N/A' : matches.first.innerText.trim();
+}
+
 Future<void> fetchAndParseSolarData() async {
   const url = 'https://www.hamqsl.com/solarxml.php';
 
@@ -19,47 +24,25 @@ Future<void> fetchAndParseSolarData() async {
 
       // Solar data map
       final solarDataElement = document.findAllElements('solardata').first;
+      String field(String tag) => _tagText(solarDataElement, tag);
       solarData = {
-        'Updated':
-            solarDataElement.findElements('updated').first.innerText.trim(),
-        'SFI':
-            solarDataElement.findElements('solarflux').first.innerText.trim(),
-        'A Index':
-            solarDataElement.findElements('aindex').first.innerText.trim(),
-        'K Index':
-            solarDataElement.findElements('kindex').first.innerText.trim(),
-        'MUF US Boulder':
-            solarDataElement.findElements('kindexnt').first.innerText.trim(),
-        'X-Ray': solarDataElement.findElements('xray').first.innerText.trim(),
-        'SN': solarDataElement.findElements('sunspots').first.innerText.trim(),
-        '304A':
-            solarDataElement.findElements('heliumline').first.innerText.trim(),
-        'Proton Flux':
-            solarDataElement.findElements('protonflux').first.innerText.trim(),
-        'Electron Flux':
-            solarDataElement.findElements('electonflux').first.innerText.trim(),
-        'Aurora':
-            solarDataElement.findElements('aurora').first.innerText.trim(),
-        'Normalization':
-            solarDataElement
-                .findElements('normalization')
-                .first
-                .innerText
-                .trim(),
-        'Aurora Lat':
-            solarDataElement.findElements('latdegree').first.innerText.trim(),
-        'Solar Wind':
-            solarDataElement.findElements('solarwind').first.innerText.trim(),
-        'Magnetic Field':
-            solarDataElement
-                .findElements('magneticfield')
-                .first
-                .innerText
-                .trim(),
-        'Geomag Field':
-            solarDataElement.findElements('geomagfield').first.innerText.trim(),
-        'S/N Level':
-            solarDataElement.findElements('signalnoise').first.innerText.trim(),
+        'Updated': field('updated'),
+        'SFI': field('solarflux'),
+        'A Index': field('aindex'),
+        'K Index': field('kindex'),
+        'MUF US Boulder': field('kindexnt'),
+        'X-Ray': field('xray'),
+        'SN': field('sunspots'),
+        '304A': field('heliumline'),
+        'Proton Flux': field('protonflux'),
+        'Electron Flux': field('electonflux'),
+        'Aurora': field('aurora'),
+        'Normalization': field('normalization'),
+        'Aurora Lat': field('latdegree'),
+        'Solar Wind': field('solarwind'),
+        'Magnetic Field': field('magneticfield'),
+        'Geomag Field': field('geomagfield'),
+        'S/N Level': field('signalnoise'),
       };
 
       // Print solar data
