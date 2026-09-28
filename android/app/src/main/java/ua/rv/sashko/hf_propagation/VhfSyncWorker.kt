@@ -6,6 +6,7 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.w3c.dom.Element
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
@@ -26,8 +27,10 @@ class VhfSyncWorker(
                 saveToWidgetPreferences(values)
                 VhfBandConditionsWidget.updateAllWidgets(applicationContext)
                 Result.success()
+            } catch (e: IOException) {
+                if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
             } catch (e: Exception) {
-                Result.retry()
+                Result.failure()
             }
         }
 
@@ -87,6 +90,7 @@ class VhfSyncWorker(
 
     companion object {
         private const val SOLAR_XML_URL = "https://www.hamqsl.com/solarxml.php"
+        private const val MAX_ATTEMPTS = 5
 
         // Must match es.antonborri.home_widget.HomeWidgetPlugin.PREFERENCES so data saved
         // here is visible to HomeWidget.getWidgetData() if the Flutter app is ever opened.

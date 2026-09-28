@@ -3,6 +3,7 @@ package ua.rv.sashko.hf_propagation
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
@@ -21,8 +22,10 @@ class HfSyncWorker(
           saveToWidgetPreferences(values)
           HfBandConditionsWidget.updateAllWidgets(applicationContext)
           Result.success()
+        } catch (e: IOException) {
+          if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
         } catch (e: Exception) {
-          Result.retry()
+          Result.failure()
         }
       }
 
@@ -79,6 +82,7 @@ class HfSyncWorker(
 
   companion object {
     private const val SOLAR_XML_URL = "https://www.hamqsl.com/solarxml.php"
+    private const val MAX_ATTEMPTS = 5
     private const val HOME_WIDGET_PREFERENCES = "HomeWidgetPreferences"
   }
 }
