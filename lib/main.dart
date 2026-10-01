@@ -74,7 +74,12 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _showCachedThenLoad();
+  }
+
+  Future<void> _showCachedThenLoad() async {
+    if (await loadCachedSolarData() && mounted) setState(() {});
+    await _loadData();
   }
 
   Future<void> _loadData() async {
