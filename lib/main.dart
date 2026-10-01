@@ -69,7 +69,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   bool _isLoading = true;
-  bool _hasError = false;
+  SolarData? _data;
 
   @override
   void initState() {
@@ -78,34 +78,31 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _showCachedThenLoad() async {
-    if (await loadCachedSolarData() && mounted) setState(() {});
+    final cached = await loadCachedSolarData();
+    if (cached != null && mounted) setState(() => _data = cached);
     await _loadData();
   }
 
   Future<void> _loadData() async {
-    setState(() {
-      _isLoading = true;
-      _hasError = false;
-    });
+    setState(() => _isLoading = true);
 
-    var failed = false;
+    SolarData? fresh;
     try {
-      await fetchAndParseSolarData();
+      fresh = await fetchSolarData();
     } catch (_) {
-      failed = true;
+      // Handled below: the old data stays on screen if there is any.
     }
 
     if (!mounted) return;
 
     setState(() {
       _isLoading = false;
-      // Only take over the screen when there is nothing to fall back on.
-      _hasError = failed && solarData.isEmpty;
+      if (fresh != null) _data = fresh;
     });
 
     // A refresh that fails while data is already on screen keeps the stale
     // data visible and reports the failure instead of discarding the view.
-    if (failed && solarData.isNotEmpty) {
+    if (fresh == null && _data != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not update solar data')),
       );
@@ -214,6 +211,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    final data = _data;
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       drawer: Drawer(
@@ -267,9 +265,9 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       body:
-          _isLoading && solarData.isEmpty
+          _isLoading && data == null
               ? const Center(child: CircularProgressIndicator())
-              : _hasError
+              : data == null
               ? Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -309,7 +307,7 @@ class _MainPageState extends State<MainPage> {
 
                       Center(
                         child: Text(
-                          solarData['Updated'] ?? 'N/A',
+                          data.updated,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.yellow.shade800,
@@ -326,11 +324,9 @@ class _MainPageState extends State<MainPage> {
                             DataColumn(label: Text('Night')),
                           ],
                           rows:
-                              bandConditions.entries.map((entry) {
-                                String dayCondition =
-                                    entry.value['day'] ?? 'N/A';
-                                String nightCondition =
-                                    entry.value['night'] ?? 'N/A';
+                              data.bands.entries.map((entry) {
+                                final dayCondition = entry.value.day;
+                                final nightCondition = entry.value.night;
 
                                 return DataRow(
                                   cells: [
@@ -392,8 +388,7 @@ class _MainPageState extends State<MainPage> {
                                 DataCell(
                                   Builder(
                                     builder: (context) {
-                                      final dynamic aurLatStrValue =
-                                          solarData['Aurora Lat'];
+                                      final aurLatStrValue = data.auroraLat;
 
                                       final String auroraLatText;
                                       Color aurLatTextColor;
@@ -438,7 +433,7 @@ class _MainPageState extends State<MainPage> {
                                 ),
                               ],
                             ),
-                            ...vhfConditions.entries.map((entry) {
+                            ...data.vhf.entries.map((entry) {
                               String location = entry.value;
 
                               return DataRow(
@@ -494,12 +489,7 @@ class _MainPageState extends State<MainPage> {
                             DataColumn(label: SizedBox.shrink()),
                           ],
                           rows:
-                              solarData.entries
-                                  .where(
-                                    (entry) =>
-                                        entry.key != 'Updated' &&
-                                        entry.key != 'Aurora Lat',
-                                  )
+                              data.indices.entries
                                   .map(
                                     (entry) => DataRow(
                                       cells: [

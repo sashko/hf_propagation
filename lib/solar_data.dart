@@ -3,9 +3,27 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart' as xml;
 
-Map<String, String> solarData = {};
-Map<String, Map<String, String>> bandConditions = {};
-Map<String, String> vhfConditions = {};
+typedef BandCondition = ({String day, String night});
+
+@immutable
+class SolarData {
+  const SolarData({
+    required this.updated,
+    required this.auroraLat,
+    required this.indices,
+    required this.bands,
+    required this.vhf,
+  });
+
+  final String updated;
+  final String auroraLat;
+
+  final Map<String, String> indices;
+
+  final Map<String, BandCondition> bands;
+
+  final Map<String, String> vhf;
+}
 
 String _tagText(xml.XmlElement parent, String name) {
   final matches = parent.findElements(name);
@@ -14,18 +32,17 @@ String _tagText(xml.XmlElement parent, String name) {
 
 const _cacheKey = 'solar_xml';
 
-Future<bool> loadCachedSolarData() async {
+Future<SolarData?> loadCachedSolarData() async {
   final body = (await SharedPreferences.getInstance()).getString(_cacheKey);
-  if (body == null) return false;
+  if (body == null) return null;
   try {
-    _parseSolarXml(body);
-    return true;
+    return _parseSolarXml(body);
   } catch (_) {
-    return false;
+    return null;
   }
 }
 
-Future<void> fetchAndParseSolarData() async {
+Future<SolarData> fetchSolarData() async {
   const url = 'https://www.hamqsl.com/solarxml.php';
 
   final response = await http
@@ -36,21 +53,21 @@ Future<void> fetchAndParseSolarData() async {
     throw Exception('Failed to load data. Status code: ${response.statusCode}');
   }
 
-  _parseSolarXml(response.body);
+  final data = _parseSolarXml(response.body);
   await (await SharedPreferences.getInstance()).setString(
     _cacheKey,
     response.body,
   );
+  return data;
 }
 
-void _parseSolarXml(String body) {
+SolarData _parseSolarXml(String body) {
   final document = xml.XmlDocument.parse(body);
 
   final solarDataElement = document.findAllElements('solardata').first;
   String field(String tag) => _tagText(solarDataElement, tag);
 
-  solarData = {
-    'Updated': field('updated'),
+  final indices = {
     'SFI': field('solarflux'),
     'A Index': field('aindex'),
     'K Index': field('kindex'),
@@ -62,7 +79,6 @@ void _parseSolarXml(String body) {
     'Electron Flux': field('electonflux'),
     'Aurora': field('aurora'),
     'Normalization': field('normalization'),
-    'Aurora Lat': field('latdegree'),
     'Solar Wind': field('solarwind'),
     'Magnetic Field': field('magneticfield'),
     'Geomag Field': field('geomagfield'),
@@ -71,37 +87,36 @@ void _parseSolarXml(String body) {
 
   if (kDebugMode) {
     debugPrint('\n\n--- Solar Data ---');
-    solarData.forEach((key, value) => debugPrint('$key: $value'));
+    indices.forEach((key, value) => debugPrint('$key: $value'));
   }
 
   final calculatedConditions =
       document.findAllElements('calculatedconditions').first;
 
-  final bands = calculatedConditions.findElements('band');
+  final bandElements = calculatedConditions.findElements('band');
+  final bands = <String, BandCondition>{};
 
-  for (var band in bands) {
+  for (var band in bandElements) {
     final name = band.getAttribute('name');
     final time = band.getAttribute('time'); // 'day' or 'night'
-    final condition =
-        band.innerText.trim(); // The actual condition text like "Good", "Poor"
+    final condition = band.innerText.trim();
 
     if (name != null && time != null) {
-      if (!bandConditions.containsKey(name)) {
-        bandConditions[name] = {'day': 'N/A', 'night': 'N/A'};
-      }
+      var current = bands[name] ?? (day: 'N/A', night: 'N/A');
 
       if (time == 'day') {
-        bandConditions[name]?['day'] = condition;
+        current = (day: condition, night: current.night);
       } else if (time == 'night') {
-        bandConditions[name]?['night'] = condition;
+        current = (day: current.day, night: condition);
       }
+      bands[name] = current;
     }
   }
 
   if (kDebugMode) {
     debugPrint('\n\n--- Band Conditions ---');
-    bandConditions.forEach((band, cond) {
-      debugPrint('$band - Day: ${cond['day']}, Night: ${cond['night']}');
+    bands.forEach((band, cond) {
+      debugPrint('$band - Day: ${cond.day}, Night: ${cond.night}');
     });
   }
 
@@ -139,7 +154,7 @@ void _parseSolarXml(String body) {
     }
   }
 
-  vhfConditions = {
+  final vhf = {
     "Aurora": aurora,
     "6m ES Europe": es6mEurope,
     "4m ES Europe": es4mEurope,
@@ -149,8 +164,16 @@ void _parseSolarXml(String body) {
 
   if (kDebugMode) {
     debugPrint('\n\n--- VHF Conditions ---');
-    vhfConditions.forEach((location, cond) {
+    vhf.forEach((location, cond) {
       debugPrint('$location: $cond');
     });
   }
+
+  return SolarData(
+    updated: field('updated'),
+    auroraLat: field('latdegree'),
+    indices: indices,
+    bands: bands,
+    vhf: vhf,
+  );
 }
