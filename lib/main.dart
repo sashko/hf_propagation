@@ -9,12 +9,6 @@ void main() {
   runApp(const MainApp());
 }
 
-Future<void> _launchURL(Uri url) async {
-  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-    throw Exception('Could not launch $url');
-  }
-}
-
 Color _getColorForCondition(String condition, BuildContext context) {
   switch (condition.trim()) {
     case 'Good':
@@ -107,6 +101,15 @@ class _MainPageState extends State<MainPage> {
         const SnackBar(content: Text('Could not update solar data')),
       );
     }
+  }
+
+  Future<void> _launchURL(Uri url) async {
+    if (await launchUrl(url, mode: LaunchMode.externalApplication)) return;
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Could not open the link')));
   }
 
   static const _solarDataHelp = <String, String>{
