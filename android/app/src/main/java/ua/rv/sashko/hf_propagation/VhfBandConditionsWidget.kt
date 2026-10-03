@@ -110,14 +110,7 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
       return RemoteViews(context.packageName, R.layout.vhf_band_conditions_widget).apply {
         setOnClickPendingIntent(R.id.widget_container, pendingIntent)
 
-        // Get data from widget SharedPreferences
         val auroraLatString = widgetData.getString("auroraLat", null)
-        val aurora = widgetData.getString("aurora", "N/A")
-        val es6mEurope = widgetData.getString("es6mEurope", "N/A")
-        val es4mEurope = widgetData.getString("es4mEurope", "N/A")
-        val es2mEurope = widgetData.getString("es2mEurope", "N/A")
-        val es2mNorthAmerica = widgetData.getString("es2mNorthAmerica", "N/A")
-
         val auroraLatText =
             when {
               auroraLatString == "No Report" -> "No Report"
@@ -126,24 +119,21 @@ class VhfBandConditionsWidget : HomeWidgetProvider() {
               else -> "N/A"
             }
 
-        // Set text values
         setTextViewText(R.id.auroraLat_text, auroraLatText)
-        setTextViewText(R.id.aurora_text, aurora)
-        setTextViewText(R.id.es6mEurope_text, es6mEurope)
-        setTextViewText(R.id.es4mEurope_text, es4mEurope)
-        setTextViewText(R.id.es2mEurope_text, es2mEurope)
-        setTextViewText(R.id.es2mNorthAmerica_text, es2mNorthAmerica)
-
-        // Set text colors
         setTextColor(R.id.auroraLat_text, getAuroraLatColor(context, auroraLatString))
-        setTextColor(R.id.aurora_text, getColorForCondition(context, aurora ?: "N/A"))
-        setTextColor(R.id.es6mEurope_text, getColorForCondition(context, es6mEurope ?: "N/A"))
-        setTextColor(R.id.es4mEurope_text, getColorForCondition(context, es4mEurope ?: "N/A"))
-        setTextColor(R.id.es2mEurope_text, getColorForCondition(context, es2mEurope ?: "N/A"))
-        setTextColor(
-            R.id.es2mNorthAmerica_text,
-            getColorForCondition(context, es2mNorthAmerica ?: "N/A"),
-        )
+
+        for ((key, id) in
+            listOf(
+                "aurora" to R.id.aurora_text,
+                "es6mEurope" to R.id.es6mEurope_text,
+                "es4mEurope" to R.id.es4mEurope_text,
+                "es2mEurope" to R.id.es2mEurope_text,
+                "es2mNorthAmerica" to R.id.es2mNorthAmerica_text,
+            )) {
+          val value = widgetData.getString(key, "N/A") ?: "N/A"
+          setTextViewText(id, value)
+          setTextColor(id, getColorForCondition(context, value))
+        }
       }
     }
 
