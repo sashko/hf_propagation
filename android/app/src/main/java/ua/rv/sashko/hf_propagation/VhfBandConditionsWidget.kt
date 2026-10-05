@@ -1,142 +1,43 @@
 package ua.rv.sashko.hf_propagation
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.widget.RemoteViews
 import androidx.core.content.ContextCompat
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.ExistingWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import es.antonborri.home_widget.HomeWidgetProvider
-import java.util.concurrent.TimeUnit
 
-class VhfBandConditionsWidget : HomeWidgetProvider() {
-  override fun onEnabled(context: Context) {
-    super.onEnabled(context)
-    scheduleSync(context)
-  }
+class VhfBandConditionsWidget : SyncedWidgetProvider(VhfSyncWorker::class.java, "solar-sync") {
+  override fun buildViews(context: Context, widgetData: SharedPreferences): RemoteViews {
+    return RemoteViews(context.packageName, R.layout.vhf_band_conditions_widget).apply {
+      setOnClickPendingIntent(R.id.widget_container, launchAppIntent(context))
 
-  override fun onDisabled(context: Context) {
-    super.onDisabled(context)
-    WorkManager.getInstance(context).cancelUniqueWork(PERIODIC_SYNC_NAME)
-  }
+      val auroraLatString = widgetData.getString("auroraLat", null)
+      val auroraLatText =
+          when {
+            auroraLatString == "No Report" -> "No Report"
+            auroraLatString?.toDoubleOrNull() != null -> "%.1f°".format(auroraLatString.toDouble())
+            else -> "N/A"
+          }
 
-  override fun onUpdate(
-      context: Context,
-      appWidgetManager: AppWidgetManager,
-      appWidgetIds: IntArray,
-      widgetData: SharedPreferences,
-  ) {
-    // onEnabled() only fires when the first instance of this widget is added, so it
-    // never re-runs for widgets that already existed before an app update. onUpdate()
-    // does fire in that case (and periodically thereafter), so scheduling has to be
-    // ensured here too — enqueueing is idempotent (KEEP), so this is a cheap no-op
-    // once sync is already scheduled.
-    scheduleSync(context)
+      setTextViewText(R.id.auroraLat_text, auroraLatText)
+      setTextColor(R.id.auroraLat_text, getAuroraLatColor(context, auroraLatString))
 
-    val views = buildViews(context, widgetData)
-    for (appWidgetId in appWidgetIds) {
-      appWidgetManager.updateAppWidget(appWidgetId, views)
+      for ((key, id) in
+          listOf(
+              "aurora" to R.id.aurora_text,
+              "es6mEurope" to R.id.es6mEurope_text,
+              "es4mEurope" to R.id.es4mEurope_text,
+              "es2mEurope" to R.id.es2mEurope_text,
+              "es2mNorthAmerica" to R.id.es2mNorthAmerica_text,
+          )) {
+        val value = widgetData.getString(key, "N/A") ?: "N/A"
+        setTextViewText(id, value)
+        setTextColor(id, getColorForCondition(context, value))
+      }
     }
   }
 
   companion object {
-    private const val IMMEDIATE_SYNC_NAME = "solar-sync-on-widget-add"
-    private const val PERIODIC_SYNC_NAME = "solar-sync-periodic"
-
-    private fun scheduleSync(context: Context) {
-      val constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-
-      // Immediate fetch so the widget shows real data as soon as possible.
-      WorkManager.getInstance(context)
-          .enqueueUniqueWork(
-              IMMEDIATE_SYNC_NAME,
-              ExistingWorkPolicy.KEEP,
-              OneTimeWorkRequest.Builder(VhfSyncWorker::class.java)
-                  .setConstraints(constraints)
-                  .build(),
-          )
-
-      // Recurring sync, scheduled natively so it works even if the Flutter app
-      // (and its Dart-side scheduling) never runs on this install.
-      WorkManager.getInstance(context)
-          .enqueueUniquePeriodicWork(
-              PERIODIC_SYNC_NAME,
-              ExistingPeriodicWorkPolicy.KEEP,
-              PeriodicWorkRequest.Builder(VhfSyncWorker::class.java, 1, TimeUnit.HOURS)
-                  .setConstraints(constraints)
-                  .build(),
-          )
-    }
-
-    fun updateAllWidgets(context: Context) {
-      val appWidgetManager = AppWidgetManager.getInstance(context)
-      val widgetData = context.getSharedPreferences("HomeWidgetPreferences", Context.MODE_PRIVATE)
-      val ids =
-          appWidgetManager.getAppWidgetIds(
-              ComponentName(context, VhfBandConditionsWidget::class.java)
-          )
-      val views = buildViews(context, widgetData)
-      for (id in ids) {
-        appWidgetManager.updateAppWidget(id, views)
-      }
-    }
-
-    private fun buildViews(
-        context: Context,
-        widgetData: SharedPreferences,
-    ): RemoteViews {
-      val launchIntent =
-          Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-          }
-      val pendingIntent =
-          PendingIntent.getActivity(
-              context,
-              0,
-              launchIntent,
-              PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-          )
-
-      return RemoteViews(context.packageName, R.layout.vhf_band_conditions_widget).apply {
-        setOnClickPendingIntent(R.id.widget_container, pendingIntent)
-
-        val auroraLatString = widgetData.getString("auroraLat", null)
-        val auroraLatText =
-            when {
-              auroraLatString == "No Report" -> "No Report"
-              auroraLatString?.toDoubleOrNull() != null ->
-                  "%.1f°".format(auroraLatString.toDouble())
-              else -> "N/A"
-            }
-
-        setTextViewText(R.id.auroraLat_text, auroraLatText)
-        setTextColor(R.id.auroraLat_text, getAuroraLatColor(context, auroraLatString))
-
-        for ((key, id) in
-            listOf(
-                "aurora" to R.id.aurora_text,
-                "es6mEurope" to R.id.es6mEurope_text,
-                "es4mEurope" to R.id.es4mEurope_text,
-                "es2mEurope" to R.id.es2mEurope_text,
-                "es2mNorthAmerica" to R.id.es2mNorthAmerica_text,
-            )) {
-          val value = widgetData.getString(key, "N/A") ?: "N/A"
-          setTextViewText(id, value)
-          setTextColor(id, getColorForCondition(context, value))
-        }
-      }
-    }
-
     private fun getAuroraLatColor(context: Context, auroraLatString: String?): Int {
       val value = auroraLatString?.toDoubleOrNull()
       val colorRes =

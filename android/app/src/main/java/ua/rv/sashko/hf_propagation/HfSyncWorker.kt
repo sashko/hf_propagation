@@ -20,7 +20,7 @@ class HfSyncWorker(
         try {
           val values = parseHfValues(fetchXml())
           saveToWidgetPreferences(values)
-          HfBandConditionsWidget.updateAllWidgets(applicationContext)
+          HfBandConditionsWidget().updateAllWidgets(applicationContext)
           Result.success()
         } catch (e: IOException) {
           if (runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.failure()
