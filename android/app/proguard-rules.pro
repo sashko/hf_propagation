@@ -24,3 +24,7 @@
 -dontwarn com.google.android.play.core.tasks.OnFailureListener
 -dontwarn com.google.android.play.core.tasks.OnSuccessListener
 -dontwarn com.google.android.play.core.tasks.Task
+
+# shared_preferences_android 2.5+ calls these via JNI by exact signature.
+-keep class io.flutter.plugins.sharedpreferences.** { *; }
+-keep class kotlin.** { *; }
