@@ -476,7 +476,7 @@ class _MainPageState extends State<MainPage> {
                           IconButton(
                             onPressed: () => _showSolarDataHelp(context),
                             tooltip: 'Solar data help',
-                            icon: const Icon(Icons.info, size: 20),
+                            icon: const Icon(Icons.info_outline, size: 20),
                             color: Theme.of(context).colorScheme.primary,
                           ),
                         ],
